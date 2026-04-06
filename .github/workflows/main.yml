@@ -31,3 +31,21 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/signature7772/my-resume-site:latest
+
+  performance-test:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Docker Container
+        run: docker run -d -p 8081:80 ghcr.io/signature7772/my-resume-site:latest
+
+      - name: Wait for service
+        run: sleep 5
+
+      - name: Run k6 test
+        uses: grafana/k6-action@v0.3.1
+        with:
+          filename: tests/k6-test.js
