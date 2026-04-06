@@ -7,25 +7,25 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # 1. Джоб для лінтера
+  # Етап 1: Перевірка HTML (Linter)
   linter:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: HTML Check
-        uses: htmlhint/HTMLHint-action@v2
+      - name: HTMLHint
+        uses: peaceiris/actions-htmlhint@v2
         with:
-          target: 'index.html'
+          target_files: 'index.html'
 
-  # 2. Джоб для збірки та пушу в Registry
+  # Етап 2: Збірка та завантаження в Docker Registry
   build-and-push:
-    needs: linter # Запускати тільки якщо лінтер пройшов успішно
+    needs: linter
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      packages: write # Дозвіл на запис у GitHub Packages
+      packages: write
 
     steps:
       - name: Checkout code
@@ -39,9 +39,9 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
+          # Тут назва імеджу автоматично підтягнеться з твого репозиторію
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          # Назва імежду буде: ghcr.io/твій-логін/назва-репо:latest
           tags: ghcr.io/${{ github.repository }}:latest
