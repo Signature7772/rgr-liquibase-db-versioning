@@ -3,11 +3,11 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
-  # Залишаємо тільки основну задачу — збірку та пуш імежду
   build-and-push:
     runs-on: ubuntu-latest
     permissions:
@@ -30,4 +30,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/signature7772/my-resume-site:latest
